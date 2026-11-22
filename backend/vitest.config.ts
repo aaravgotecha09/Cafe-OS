@@ -1,0 +1,2 @@
+import { defineConfig } from "vitest/config";
+export default defineConfig({ test: { globalSetup: ["tests/global-setup.ts"], env: { NODE_ENV: "test", DATABASE_URL: process.env.TEST_DATABASE_URL || "postgresql://cafe:cafe@localhost:5432/cafeos_test", PAYMENT_TEST_MODE: "true", RAZORPAY_KEY_ID: "", RAZORPAY_KEY_SECRET: "", RESEND_API_KEY: "", RAZORPAY_WEBHOOK_SECRET: "whsec_test" }, fileParallelism: false, testTimeout: 30000, hookTimeout: 60000 } });

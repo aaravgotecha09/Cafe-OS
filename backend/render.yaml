@@ -1,0 +1,34 @@
+# Render Blueprint: New + → Blueprint → select this repo. Set the `sync: false` values in the dashboard.
+databases:
+  - name: cafeos-db
+    databaseName: cafeos
+    plan: basic-256mb          # use a paid plan in production (free databases expire)
+services:
+  - type: web
+    name: cafeos-api
+    runtime: node
+    rootDir: backend
+    plan: starter              # free web services sleep, which drops WebSocket connections
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm run start:render   # applies pending migrations, then starts the server
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - { key: NODE_ENV, value: production }
+      - { key: NODE_VERSION, value: "22" }
+      - { key: DATABASE_URL, fromDatabase: { name: cafeos-db, property: connectionString } }
+      - { key: JWT_ACCESS_SECRET, generateValue: true }
+      - { key: JWT_REFRESH_SECRET, generateValue: true }
+      - { key: QR_SIGNING_SECRET, generateValue: true }
+      - { key: FRONTEND_URL, sync: false }        # e.g. https://your-app.vercel.app
+      - { key: BACKEND_URL, sync: false }         # e.g. https://cafeos-api.onrender.com
+      - { key: PAYMENT_TEST_MODE, value: "true" } # set to "false" ONLY after Razorpay keys + webhook are configured
+      - { key: RAZORPAY_KEY_ID, sync: false }
+      - { key: RAZORPAY_KEY_SECRET, sync: false }
+      - { key: RAZORPAY_WEBHOOK_SECRET, sync: false }
+      - { key: RESEND_API_KEY, sync: false }
+      - { key: EMAIL_FROM, sync: false }
+      - { key: CLOUDINARY_CLOUD_NAME, sync: false }
+      - { key: CLOUDINARY_API_KEY, sync: false }
+      - { key: CLOUDINARY_API_SECRET, sync: false }
+      - { key: ALLOW_RESTAURANT_SIGNUP, value: "false" }
